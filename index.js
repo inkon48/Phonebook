@@ -112,14 +112,6 @@ app.post("/api/persons", (req, res) => {
     res.status(201).json([{message: "Person added"}, { person: person }]);
 });
 
-
-const unknownEndpoint = (request, response) => {
-  response.status(404).send({ error: 'unknown endpoint' })
-}
-
-app.use(unknownEndpoint);
-
-
 const port = 3000;
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
