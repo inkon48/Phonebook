@@ -1,3 +1,4 @@
+require("dotenv").config();
 const mongoose = require("mongoose");
 
 
@@ -9,7 +10,7 @@ if (process.argv.length < 3) {
 const password = process.argv[2];
 const encodedPassword = encodeURIComponent(password);
 
-const url = `mongodb+srv://inkon601_db_user:${encodedPassword}@cluster0.uxvoyys.mongodb.net/phoneBook?retryWrites=true&w=majority&appName=Cluster0`;
+const url = process.env.MONGODB_URI;
 
 mongoose.set("strictQuery", false);
 mongoose.connect(url, { family: 4 });
