@@ -1,19 +1,94 @@
+# Node dependencies
 node_modules/
+
+# Build outputs
 dist/
 build/
+
+# Test coverage
 coverage/
+
+# Environment and secrets
 .env
 .env.*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.envrc
+
+# Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 *.log
+logs/
+debug.log
+
+# Caches
 .cache/
 .parcel-cache/
+.nyc_output/
+
+# Frameworks
 .next/
+
+# OS files
 .DS_Store
-.vscode/
-.idea/
 Thumbs.db
 ehthumbs.db
+
+# Editors/IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Package manager files (optional - ignore if you keep lockfiles locally/private)
+.npmrc
+.yarnrc
+.yarnrc.yml
+package-lock.json
+yarn.lock
+.pnpm-debug.log
+.pnpmfile.cjs
+
+# Secrets, keys and certs
+*.pem
+*.key
+*.pfx
+*.crt
+*.cer
+*.jks
+*.p12
+*.p8
+*.p10
+*.pfx
+*.p12
+.secrets/
+secrets/
+secret*
+*.secret
+credentials.json
+google-service-account.json
+firebase-debug.log
+
+# Database and dumps
+*.sqlite
+*.sqlite3
+*.db
+*.dump
+mongodb-data/
+data/db/
+dump/
+
+# REPL history
+.node_repl_history
+
+# Misc
+.vagrant/
+.env.local
+
+# Optional local dev files
+dist-*
