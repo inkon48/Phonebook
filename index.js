@@ -1,6 +1,8 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const morgan = require("morgan");
+const PhoneBook = require("./models/phonebook");
 
 const requestLogger = (request, response, next) => {
   console.log('Method:', request.method)
@@ -25,50 +27,35 @@ app.use(morgan(function(tokens, request, response) {
 app.use(express.json()); // middleware to parse JSON bodies
 app.use(requestLogger);
 
-let data = [
-    { 
-      "id": "1",
-      "name": "Arto Hellas", 
-      "number": "040-123456"
-    },
-    { 
-      "id": "2",
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523"
-    },
-    { 
-      "id": "3",
-      "name": "Dan Abramov", 
-      "number": "12-43-234345"
-    },
-    { 
-      "id": "4",
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122"
-    }
-]
-
 app.get("/", (req, res) => {
     res.send("<p>Welcome</p>");
 });
 
 app.get("/api/persons", (req, res) => {
-    res.json(data);
+    PhoneBook.find({}).then(phoneBooks => {
+        res.json(phoneBooks);
+    })
 });
 
 app.get("/info", (req, res) => {
-    res.send(`<p>Phonebook has info for ${data.length} people</p><p>${new Date()}</p>`);
+    PhoneBook.countDocuments({}).then(count => {
+        res.send(`<p>Phonebook has info for ${count} people</p><p>${new Date()}</p>`);
+    });
 });
 
 
 app.get("/api/persons/:id", (req, res) => {
     const id = req.params.id;
-    const person = data.find(p => p.id === id);
-    if (person) {
-        res.json(person);
-    } else {
-        res.status(404).json({ error: "Person not found" });
-    }
+    PhoneBook.findById(id).then(phoneBook => {
+        if (phoneBook) {
+            res.json(phoneBook);
+        } else {
+            res.status(404).end();
+        }
+    }).catch(error => {
+        console.log(error);
+        res.status(400).send({ error: "malformatted id" });
+    });
 });
 
 
@@ -95,24 +82,24 @@ app.post("/api/persons", (req, res) => {
     if (!body.name || !body.number) {
         return res.status(400).json({ error: "Name and number are required" });
     }
-    
-    const doesNameExist = data.some(p => p.name === body.name);
-    if (doesNameExist) {
-        return res.status(400).json({ error: "Name must be unique" });
-    }
 
-    
-    const person = {
-        id: generateId(),
-        name: body.name, 
-        number: body.number
-    }
+    PhoneBook.findOne({ name: body.name }).then(existingPerson => {
+        if (existingPerson) {
+            return res.status(400).json({ error: "Name must be unique" });
+        }
 
-    data = data.concat(person);
-    res.status(201).json([{message: "Person added"}, { person: person }]);
+        const phoneBook = new PhoneBook({
+            name: body.name,
+            number: body.number
+        });
+
+        phoneBook.save().then(savedPhoneBook => {
+            res.json(savedPhoneBook);
+        });
+    });
 });
 
-const port = 3000;
+const port = process.env.PORT;
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
